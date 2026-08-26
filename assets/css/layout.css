@@ -1,0 +1,390 @@
+/* ==================================================
+   LAYOUT — Navbar, Mobile Nav, Footer
+   ================================================== */
+
+/* ---------- Navbar ---------- */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  background: transparent;
+  transition: background var(--transition-base), box-shadow var(--transition-base), height var(--transition-base);
+}
+
+.navbar.scrolled {
+  height: 72px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--shadow-sm);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.navbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.navbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.navbar__logo span {
+  color: var(--color-primary);
+}
+
+.navbar__logo i {
+  color: var(--color-primary);
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.navbar__links a {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  position: relative;
+  padding-block: 6px;
+  transition: color var(--transition-fast);
+}
+
+.navbar__links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: var(--color-primary);
+  transition: width var(--transition-base);
+}
+
+.navbar__links a:hover,
+.navbar__links a.active {
+  color: var(--color-primary);
+}
+
+.navbar__links a:hover::after,
+.navbar__links a.active::after {
+  width: 100%;
+}
+
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--tint-surface);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  background: var(--color-dark);
+  color: #fff;
+}
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--tint-surface);
+}
+
+.nav-toggle span {
+  width: 20px;
+  height: 2px;
+  background: var(--color-text);
+  border-radius: 2px;
+  transition: all var(--transition-base);
+}
+
+.nav-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle.active span:nth-child(2) { opacity: 0; }
+.nav-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(320px, 84vw);
+  height: 100vh;
+  background: var(--color-card);
+  box-shadow: var(--shadow-lg);
+  z-index: 110;
+  padding: 100px 32px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  transform: translateX(100%);
+  transition: transform var(--transition-slow);
+}
+
+.mobile-nav.active {
+  transform: translateX(0);
+}
+
+.mobile-nav a {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.mobile-nav a:hover {
+  color: var(--color-primary);
+}
+
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 27, 0.5);
+  z-index: 105;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-base);
+}
+
+.nav-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (max-width: 992px) {
+  .navbar__links {
+    display: none;
+  }
+  .nav-toggle {
+    display: flex;
+  }
+}
+
+/* Below ~576px the navbar__actions row (theme toggle, profile, Reserve a
+   Table, hamburger) has no room to sit on one line without wrapping/
+   overflowing. Hide the pill button and the profile icon here — the
+   "Profil"/"Pesan Meja" links inside .mobile-nav already cover both.
+   Logo and remaining icons are also tightened so the row doesn't feel
+   cramped/long. */
+@media (max-width: 576px) {
+  .navbar .container {
+    gap: 12px;
+  }
+  .navbar__logo {
+    font-size: 1.1rem;
+    gap: 8px;
+  }
+  .navbar__actions {
+    gap: 10px;
+  }
+  .navbar__actions .btn-primary,
+  .navbar__actions .btn-icon {
+    display: none;
+  }
+}
+
+/* ---------- Page Hero (small) ---------- */
+.page-hero-sm {
+  position: relative;
+  padding-top: calc(var(--header-height) + 56px);
+  padding-bottom: 56px;
+  background: var(--gradient-dark);
+  overflow: hidden;
+}
+
+.page-hero-sm::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--hero-sm-bg, none) center/cover;
+  opacity: 0.18;
+}
+
+.page-hero-sm .container {
+  position: relative;
+  z-index: 1;
+}
+
+.breadcrumb.on-dark,
+.breadcrumb.on-dark a {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.breadcrumb.on-dark .current {
+  color: #fff;
+}
+
+.page-hero-sm h1 {
+  color: #fff;
+  margin-top: 12px;
+}
+
+.page-hero-sm p {
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 10px;
+  max-width: 520px;
+}
+
+/* ---------- Footer ---------- */
+.footer {
+  background: var(--color-dark);
+  color: rgba(255, 255, 255, 0.75);
+  padding-top: 80px;
+}
+
+/* The back-to-top button is position:fixed at bottom:24px, so on mobile —
+   where the footer bottom row wraps and runs closer to the screen edges —
+   it sits permanently on top of the copyright text/links once the page is
+   scrolled fully down. Reserve clearance so nothing readable ends up
+   underneath it. */
+@media (max-width: 768px) {
+  .footer {
+    padding-bottom: 88px;
+  }
+}
+
+.footer a {
+  color: rgba(255, 255, 255, 0.75);
+  transition: color var(--transition-fast);
+}
+
+.footer a:hover {
+  color: var(--color-secondary);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer__logo {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.footer__logo span {
+  color: var(--color-secondary);
+}
+
+.footer__about {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  max-width: 320px;
+  margin-bottom: 20px;
+}
+
+.footer__title {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+
+.footer__social {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.footer__social a {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: all var(--transition-fast);
+}
+
+.footer__social a:hover {
+  background: var(--color-primary);
+  transform: translateY(-3px);
+}
+
+.footer__newsletter {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.footer__newsletter input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.footer__newsletter input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer__bottom-links {
+  display: flex;
+  gap: 20px;
+}
+
+@media (max-width: 992px) {
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .footer__grid {
+    grid-template-columns: 1fr;
+  }
+}

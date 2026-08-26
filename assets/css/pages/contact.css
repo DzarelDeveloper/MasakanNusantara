@@ -1,0 +1,97 @@
+/* ==================================================
+   CONTACT PAGE — Info Cards, Form, Map, FAQ
+   ================================================== */
+
+/* ---------- Contact Info Cards ---------- */
+.contact-info-grid {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+@media (max-width: 768px) {
+  .contact-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.contact-info-card {
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.contact-info-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-md);
+}
+
+.contact-info-card__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(231, 111, 81, 0.1);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin: 0 auto 18px;
+}
+
+.contact-info-card h4 {
+  margin-bottom: 8px;
+}
+
+.contact-info-card p {
+  font-size: 0.9rem;
+}
+
+/* ---------- Form + Map ---------- */
+.contact-main__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .contact-main__grid {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+}
+
+.contact-form-card h2,
+.contact-map h2 {
+  margin-top: 6px;
+  margin-bottom: 28px;
+}
+
+.contact-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 576px) {
+  .contact-form__row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.contact-form textarea.form-control {
+  min-height: 160px;
+}
+
+.contact-map .map-placeholder {
+  height: 380px;
+}
+
+/* ---------- FAQ ---------- */
+.faq-list {
+  max-width: 780px;
+  margin-inline: auto;
+}

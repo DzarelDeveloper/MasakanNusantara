@@ -1,0 +1,104 @@
+/* ==================================================
+   ABOUT PAGE — Story, Mission/Vision, Stats
+   ================================================== */
+
+/* ---------- Company Story ---------- */
+.story__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+
+.story__image img {
+  width: 100%;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.story__content p {
+  margin-bottom: 18px;
+}
+
+.story__content .btn {
+  margin-top: 8px;
+}
+
+@media (max-width: 992px) {
+  .story__grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .story__image {
+    order: -1;
+  }
+}
+
+/* ---------- Mission & Vision ---------- */
+.mission-vision-grid {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+@media (max-width: 768px) {
+  .mission-vision-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mv-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 40px 32px;
+  text-align: center;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.mv-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-md);
+}
+
+.mv-card__icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin: 0 auto 22px;
+}
+
+.mv-card h3 {
+  margin-bottom: 12px;
+}
+
+/* ---------- Statistics ---------- */
+.stats-bar {
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stats-section {
+  background: var(--gradient-dark);
+}
+
+.stats-section .hero__stat-value {
+  color: #fff;
+  font-size: 2.5rem;
+}
+
+.stats-section .hero__stat-label {
+  color: rgba(255, 255, 255, 0.7);
+}

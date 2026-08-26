@@ -1,0 +1,794 @@
+/* ==================================================
+   OWNER / KASIR PANEL — design tokens match the public
+   site's palette (see assets/css/base.css) so the whole
+   product feels like one system, not a bolted-on admin tool.
+   ================================================== */
+
+:root {
+  --color-primary: #E76F51;
+  --color-primary-dark: #D85C3D;
+  --color-secondary: #F4A261;
+  --color-accent: #2A9D8F;
+  --color-dark: #264653;
+  --color-bg: #F5F6F8;
+  --color-text: #1F2937;
+  --color-text-muted: #6B7280;
+  --color-card: #FFFFFF;
+  --color-border: #E5E7EB;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-full: 999px;
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --font-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-base);
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+/* ---------- Header ---------- */
+.owner-header {
+  background: var(--color-dark);
+  color: #fff;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+}
+
+.owner-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+}
+
+.owner-header h1 {
+  font-size: 1.05rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.owner-header h1 i { color: var(--color-secondary); }
+
+.owner-header__note {
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+
+.owner-nav {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  scroll-snap-type: x proximity;
+  /* Scroll-shadow trick: dark vignette appears at whichever edge still
+     has hidden tabs, and disappears once you've scrolled past it —
+     the only cue that the nav is swipeable since the scrollbar is hidden. */
+  background:
+    linear-gradient(to right, var(--color-dark) 50%, rgba(38, 70, 83, 0)) left,
+    linear-gradient(to left, var(--color-dark) 50%, rgba(38, 70, 83, 0)) right,
+    linear-gradient(to right, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0)) left,
+    linear-gradient(to left, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0)) right;
+  background-repeat: no-repeat;
+  background-color: var(--color-dark);
+  background-size: 24px 100%, 24px 100%, 10px 100%, 10px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.owner-nav::-webkit-scrollbar { display: none; }
+
+.owner-nav a {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 12px 14px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  scroll-snap-align: start;
+}
+
+.owner-nav a:hover { color: #fff; }
+
+.owner-nav a.active {
+  color: #fff;
+  border-bottom-color: var(--color-secondary);
+}
+
+.owner-header__user {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.owner-header__user .owner-header__name {
+  opacity: 0.85;
+}
+
+.owner-header__user a {
+  color: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.owner-header__user a:hover { color: #fff; }
+
+@media (max-width: 640px) {
+  .owner-header { padding: 0 14px; }
+  .owner-header__top { flex-wrap: wrap; padding: 12px 0; }
+  .owner-header__user { font-size: 0.76rem; gap: 10px; }
+  .owner-header__user .owner-header__name { display: none; }
+}
+
+/* ---------- Layout ---------- */
+.owner-main {
+  padding: 24px 20px 60px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.owner-empty {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 80px 20px;
+  font-size: 0.95rem;
+}
+
+.owner-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.owner-toolbar h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-dark);
+}
+
+/* ---------- Buttons ---------- */
+.owner-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.owner-btn:hover {
+  border-color: var(--color-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.owner-btn--primary {
+  background: var(--color-dark);
+  color: #fff;
+  border-color: var(--color-dark);
+}
+
+.owner-btn--primary:hover {
+  background: #1c343e;
+  border-color: #1c343e;
+}
+
+.owner-btn--block { width: 100%; }
+
+.owner-btn--danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.owner-btn--danger:hover {
+  background: #fef2f2;
+  border-color: #b91c1c;
+}
+
+/* ---------- Login page ---------- */
+.owner-login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    linear-gradient(160deg, rgba(38, 70, 83, 0.94), rgba(38, 70, 83, 0.85)),
+    linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+}
+
+.owner-login-box {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.owner-login-box h1 {
+  font-size: 1.4rem;
+  text-align: center;
+  margin-bottom: 4px;
+  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.owner-login-box h1 i { color: var(--color-primary); }
+
+.owner-login-box p.sub {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 28px;
+}
+
+/* ---------- Forms ---------- */
+.owner-field { margin-bottom: 16px; }
+
+.owner-field label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--color-dark);
+}
+
+.owner-field input,
+.owner-field select,
+.owner-field textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-family: inherit;
+  background: #fff;
+  color: var(--color-text);
+  transition: border-color 0.15s ease;
+}
+
+.owner-field input:focus,
+.owner-field select:focus,
+.owner-field textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.owner-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  border: 1px solid #fecaca;
+}
+
+.owner-success {
+  background: #f0fdf4;
+  color: #15803d;
+  padding: 11px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  border: 1px solid #bbf7d0;
+}
+
+.owner-modal-form {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  margin-bottom: 20px;
+}
+
+.owner-modal-form h3 {
+  margin: 0 0 16px;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--color-dark);
+}
+
+.owner-modal-form .owner-field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+/* Untuk pasangan field yang labelnya panjang (mis. "Suhu Penyajian (khusus
+   Minuman)") — 2 kolom lebar biar labelnya tidak wrap jadi 2 baris. */
+.owner-modal-form .owner-field-row--2col {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+/* ---------- Dashboard stat cards ---------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.stat-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-primary);
+}
+
+.stat-box__value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--color-dark);
+  line-height: 1.2;
+}
+
+.stat-box__label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* ---------- Tables (card list on mobile) ---------- */
+.owner-table-wrap {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+}
+
+table.owner-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.87rem;
+}
+
+table.owner-table th {
+  background: #FAFBFC;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+table.owner-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #F1F2F4;
+  vertical-align: middle;
+}
+
+table.owner-table tbody tr:last-child td { border-bottom: none; }
+table.owner-table tbody tr:hover { background: #FAFBFC; }
+
+.owner-table__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.owner-table__actions form { display: contents; }
+
+.pill {
+  display: inline-block;
+  padding: 3px 11px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.pill.kosong { background: #F3F4F6; color: #374151; }
+.pill.terisi { background: #FFF3EA; color: var(--color-primary-dark); }
+.pill.tersedia { background: #ECFDF5; color: #15803D; }
+.pill.habis { background: #FEF2F2; color: #B91C1C; }
+
+/* --- Kartu grid status meja (dashboard.php) --- */
+.table-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.table-status-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 16px 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border);
+  text-align: center;
+}
+
+.table-status-card__number {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-dark);
+  margin-bottom: 10px;
+}
+
+.table-status-card__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  background: #9CA3AF;
+}
+
+.table-status-card__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6B7280;
+}
+
+.table-status-card.status-kosong { border-left-color: #9CA3AF; }
+
+.table-status-card.status-terisi { border-left-color: var(--color-primary); }
+.table-status-card.status-terisi .table-status-card__dot { background: var(--color-primary); }
+.table-status-card.status-terisi .table-status-card__label { color: var(--color-primary-dark); }
+
+
+/* --- Kartu grid kelola meja (tables.php) --- */
+.table-manage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.table-manage-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.table-manage-card.status-terisi { border-left-color: var(--color-primary); }
+
+.table-manage-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.table-manage-card__number {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-dark);
+}
+
+.table-manage-card__body {
+  display: flex;
+  gap: 12px;
+}
+
+.table-manage-card__qr img {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  display: block;
+}
+
+.table-manage-card__info {
+  flex: 1;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.table-manage-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-border);
+}
+
+.table-manage-card__actions form {
+  margin: 0;
+}
+
+.owner-filter-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.owner-filter-tag {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: #fff;
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.owner-filter-tag.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+/* Below ~700px: each <tr> becomes a card, each <td> a labeled row.
+   Requires a data-label="..." attribute on every non-colspan <td>. */
+@media (max-width: 700px) {
+  table.owner-table thead { display: none; }
+
+  table.owner-table, table.owner-table tbody, table.owner-table tr, table.owner-table td {
+    display: block;
+    width: 100%;
+  }
+
+  table.owner-table tr {
+    padding: 14px 16px;
+    border-bottom: 8px solid var(--color-bg);
+  }
+
+  table.owner-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 7px 0;
+    border-bottom: none;
+    text-align: right;
+  }
+
+  table.owner-table td[colspan] {
+    display: block;
+    text-align: center;
+  }
+
+  table.owner-table td::before {
+    content: attr(data-label);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--color-text-muted);
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  table.owner-table td.owner-table__actions {
+    justify-content: flex-start;
+    padding-top: 10px;
+  }
+
+  table.owner-table td.owner-table__actions::before {
+    display: none;
+  }
+}
+
+/* ---------- Kitchen queue (kasir order board) ---------- */
+.order-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.order-card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid #9ca3af;
+}
+
+.order-card.status-baru_masuk { border-left-color: var(--color-primary); }
+.order-card.status-diproses { border-left-color: var(--color-secondary); }
+.order-card.status-siap_disajikan { border-left-color: var(--color-accent); }
+
+.order-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.order-card__table {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--color-dark);
+}
+
+.order-card__badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+}
+
+.order-card__customer {
+  font-weight: 600;
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+}
+
+.order-card__customer .muted {
+  font-weight: 400;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.order-card__items {
+  margin: 0 0 10px;
+  padding-left: 18px;
+  font-size: 0.88rem;
+  color: var(--color-text);
+}
+
+.order-card__item-notes {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.order-card__notes {
+  font-size: 0.82rem;
+  color: #9a3412;
+  background: #fff7ed;
+  padding: 7px 11px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+}
+
+.order-card__total {
+  font-weight: 800;
+  color: var(--color-dark);
+  margin-bottom: 4px;
+}
+
+.order-card__meta {
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+.order-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.order-card__actions form { flex: 1; min-width: 140px; }
+
+/* --- Modal konfirmasi custom (pengganti confirm() bawaan browser) --- */
+.owner-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 32, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 20px;
+}
+
+.owner-confirm-overlay.active {
+  display: flex;
+}
+
+.owner-confirm-modal {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 28px 26px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: var(--shadow-lg, 0 20px 44px rgba(0, 0, 0, 0.22));
+  text-align: center;
+  animation: ownerConfirmPop 0.15s ease;
+}
+
+@keyframes ownerConfirmPop {
+  from { transform: scale(0.94); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.owner-confirm-modal__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(38, 70, 83, 0.1);
+  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin: 0 auto 16px;
+}
+
+.owner-confirm-modal.is-danger .owner-confirm-modal__icon {
+  background: rgba(185, 28, 28, 0.1);
+  color: #B91C1C;
+}
+
+.owner-confirm-modal__message {
+  font-size: 0.95rem;
+  color: var(--color-text);
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.owner-confirm-modal__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.owner-confirm-modal__actions .owner-btn {
+  flex: 1;
+}
+
+.owner-confirm-modal.is-danger .owner-confirm-modal__actions .owner-btn--primary {
+  background: #B91C1C;
+  border-color: #B91C1C;
+}

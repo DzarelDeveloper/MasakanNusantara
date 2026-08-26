@@ -1,0 +1,1023 @@
+/* ==================================================
+   ORDER FLOW — menu.php, cart.php, payment.php,
+   order-status.php (customer-facing QR ordering)
+   ================================================== */
+
+/* Sticky footer: on short pages (mis. order-status.php begitu sudah bayar,
+   isinya cuma sedikit) footer harus tetap nempel di bawah viewport, bukan
+   ikut naik ke tengah. .page-loader/.toast-container sudah position:fixed
+   jadi tidak ikut alur flex ini. */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+.order-topbar {
+  background: var(--color-dark);
+  color: #fff;
+  padding: 16px 0;
+}
+
+.order-topbar .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-base);
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+}
+
+.order-topbar__brand i { color: var(--color-secondary); }
+
+.order-topbar__table {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.order-topbar__table i { color: var(--color-secondary); }
+
+/* ---------- Menu hero (full-bleed banner, no side padding) ---------- */
+.menu-hero {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+  background: var(--color-dark);
+}
+
+.menu-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.menu-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 24, 27, 0.2) 0%, rgba(20, 24, 27, 0.1) 35%, rgba(20, 24, 27, 0.8) 100%);
+}
+
+.menu-hero__content {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px 24px;
+  color: #fff;
+}
+
+.menu-hero__eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  margin-bottom: 4px;
+}
+
+.menu-hero__title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.menu-hero__badge {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-dark);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: var(--shadow-sm);
+}
+
+.menu-hero__badge i { color: var(--color-primary); }
+
+@media (max-width: 480px) {
+  .menu-hero { aspect-ratio: 4 / 3; }
+  .menu-hero__title { font-size: 1.2rem; }
+}
+
+/* ---------- Search bar ---------- */
+.menu-search {
+  max-width: 640px;
+  margin: 20px auto 0;
+  padding: 0 24px;
+}
+
+.menu-search__box {
+  position: relative;
+}
+
+.menu-search__box i {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+}
+
+.menu-search__box input {
+  width: 100%;
+  padding: 13px 16px 13px 42px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.menu-search__box input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+/* ---------- Category tags ---------- */
+.menu-tags {
+  max-width: 640px;
+  margin: 16px auto 0;
+  padding: 0 24px;
+  scroll-padding-inline: 24px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  scroll-snap-type: x proximity;
+  /* Scroll-shadow: dark vignette shows at whichever edge still has
+     hidden tags, fading out once you've scrolled past it. */
+  background:
+    linear-gradient(to right, var(--color-bg) 50%, rgba(0, 0, 0, 0)) left,
+    linear-gradient(to left, var(--color-bg) 50%, rgba(0, 0, 0, 0)) right,
+    linear-gradient(to right, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0)) left,
+    linear-gradient(to left, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0)) right;
+  background-repeat: no-repeat;
+  background-color: var(--color-bg);
+  background-size: 24px 100%, 24px 100%, 10px 100%, 10px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
+.menu-tags::-webkit-scrollbar { display: none; }
+
+.menu-tag {
+  flex: 0 0 auto;
+  padding: 9px 18px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  scroll-snap-align: start;
+}
+
+@media (max-width: 480px) {
+  .menu-tags {
+    scroll-snap-type: x mandatory;
+  }
+
+  .menu-tag {
+    flex: 0 0 calc((100% - 20px) / 3);
+    padding-left: 8px;
+    padding-right: 8px;
+    text-align: center;
+  }
+}
+
+.menu-tag.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.menu-item.is-hidden,
+.menu-category.is-hidden {
+  display: none !important;
+}
+
+/* ---------- Minimal order-flow footer ---------- */
+.order-footer-simple {
+  text-align: center;
+  padding: 14px 24px;
+  background: var(--color-dark);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.order-flash {
+  max-width: var(--container-max);
+  margin: 16px auto 0;
+  padding: 0 24px;
+}
+
+.order-flash__box {
+  background: rgba(42, 157, 143, 0.12);
+  color: var(--color-accent);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-flash__box.error {
+  background: rgba(231, 111, 81, 0.12);
+  color: var(--color-primary);
+}
+
+/* Order-flow pages are a compact app UI, not a marketing landing page —
+   override base.css's huge clamp()-scaled <h1>/<h2> (tuned for index.php's
+   hero) with sizes that fit this context. Doesn't affect .menu-hero__title,
+   which has its own higher-specificity class rule. */
+main h1 {
+  font-size: 1.55rem;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+main h2 {
+  font-size: 1.2rem;
+  line-height: 1.3;
+}
+
+/* order-lookup.php borrows the site's .page-hero-sm banner — restore its
+   normal large hero heading size (the main h1 rule above would otherwise
+   shrink it to app-compact size). */
+.page-hero-sm h1 {
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  margin-bottom: 12px;
+}
+
+.menu-category {
+  margin: 32px 0;
+}
+
+.menu-category h2 {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  color: var(--color-dark);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.menu-item {
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.menu-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.menu-item__pick-cta {
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-item__image {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.menu-item__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu-item__body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.menu-item__name {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.menu-item__desc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
+.menu-item__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.menu-item__price {
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.menu-item.is-habis {
+  opacity: 0.55;
+}
+
+
+.cart-float {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-dark);
+  color: #fff;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 40;
+  box-shadow: var(--shadow-lg);
+}
+
+.cart-float a { color: #fff; }
+
+.cart-float__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.3;
+}
+
+.cart-float__count {
+  font-size: 0.82rem;
+  opacity: 0.85;
+}
+
+.cart-float__total {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* --- cart.php --- */
+
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.cart-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.cart-row__name {
+  flex: 1 1 160px;
+  font-weight: 600;
+}
+
+.cart-row__price {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.cart-row__notes {
+  display: inline-block;
+  color: var(--color-primary-dark);
+  background: rgba(231, 111, 81, 0.1);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: var(--radius-full);
+  margin: 4px 0;
+}
+
+@media (max-width: 480px) {
+  .cart-row__name { flex-basis: 100%; }
+}
+
+.cart-row__remove-form {
+  margin: 0;
+}
+
+.cart-row__remove {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  line-height: 1;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.cart-row__remove:hover {
+  color: var(--color-primary);
+  background: rgba(231, 111, 81, 0.1);
+}
+
+/* --- cart.php step indicator (rincian -> detail pemesan) --- */
+.cart-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 20px;
+}
+
+.cart-steps__step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.cart-steps__num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-border);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.cart-steps__step.active {
+  color: var(--color-text);
+}
+
+.cart-steps__step.active .cart-steps__num {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.cart-steps__sep {
+  flex: 0 0 24px;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.cart-step-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0;
+  margin-bottom: 16px;
+  cursor: pointer;
+}
+
+.cart-summary {
+  background: var(--tint-surface);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin: 24px 0;
+}
+
+.cart-summary__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.cart-summary__row.total {
+  font-weight: 700;
+  font-size: 1.15rem;
+  border-top: 1px solid var(--color-border);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
+@media (max-width: 480px) {
+  .cart-summary__row.total {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .cart-summary__row.total span:last-child {
+    font-size: 1.3rem;
+  }
+}
+
+.checkout-form {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-md);
+}
+
+/* --- payment.php --- */
+
+.qris-box {
+  max-width: 420px;
+  margin: 0 auto;
+  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.qris-real-qr {
+  display: block;
+  width: 220px;
+  height: 220px;
+  margin: 20px auto;
+  padding: 10px;
+  background: #fff;
+  border-radius: var(--radius-md);
+  border: 6px solid var(--color-dark);
+}
+
+.qris-waiting {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-top: 8px;
+}
+
+.qris-waiting__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: qrisSpin 0.8s linear infinite;
+}
+
+@keyframes qrisSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- "Wallet Saya" (aplikasi e-wallet simulasi pelanggan, terpisah dari
+   tampilan resto — dipakai qris-wallet.php / qris-wallet-pin.php) --- */
+.qris-wallet-topbar {
+  background: var(--color-dark);
+  color: #fff;
+  padding: 16px 24px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.qris-wallet-topbar i {
+  color: var(--color-secondary);
+}
+
+.qris-success-icon {
+  font-size: 3rem;
+  color: var(--color-accent, #2A9D8F);
+  margin-bottom: 8px;
+}
+
+.qris-amount {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin: 8px 0 20px;
+}
+
+.qris-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.qris-actions .btn {
+  white-space: normal;
+}
+
+@media (max-width: 400px) {
+  .qris-box { padding: 24px 20px; }
+}
+
+.qris-note {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 16px;
+}
+
+/* --- Simulasi QRIS multi-langkah (scan -> konfirmasi -> PIN) --- */
+.qris-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  max-width: 420px;
+  margin: 0 auto 20px;
+}
+
+.qris-steps__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-border);
+  flex-shrink: 0;
+}
+
+.qris-steps__dot.active {
+  background: var(--color-primary);
+}
+
+.qris-steps__line {
+  flex: 1;
+  height: 2px;
+  background: var(--color-border);
+  max-width: 60px;
+}
+
+.qris-merchant {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--color-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.qris-merchant i {
+  color: var(--color-primary);
+}
+
+.qris-upload-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 4px;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+  margin-top: 12px;
+}
+
+.qris-cancel-link {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 4px;
+  margin-top: 16px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.qris-pin-input {
+  display: block;
+  width: 220px;
+  margin: 16px auto 28px;
+  padding: 14px;
+  text-align: center;
+  font-size: 1.6rem;
+  letter-spacing: 0.6em;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+}
+
+.qris-pin-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+  .menu-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Most phones (up to ~480px, covers 360-430px devices like Galaxy S8/S9,
+   iPhone SE/12/13/14): 2 columns leaves too little room for the qty input
+   + "Tambah" button, which overflow the card. Drop to a single column. */
+@media (max-width: 480px) {
+  .menu-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Item detail bottom sheet ---------- */
+.item-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.item-sheet.active {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.item-sheet__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 24, 27, 0.55);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.item-sheet.active .item-sheet__backdrop {
+  opacity: 1;
+}
+
+.item-sheet__panel {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 100%);
+  width: 100%;
+  max-width: 480px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: var(--color-card);
+  border-radius: 20px 20px 0 0;
+  transition: transform var(--transition-slow);
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.25);
+}
+
+.item-sheet.active .item-sheet__panel {
+  transform: translate(-50%, 0);
+}
+
+@media (min-width: 560px) {
+  .item-sheet__panel {
+    bottom: 50%;
+    transform: translate(-50%, calc(50% + 40px));
+    border-radius: 20px;
+  }
+  .item-sheet.active .item-sheet__panel {
+    transform: translate(-50%, 50%);
+  }
+}
+
+.item-sheet__handle {
+  width: 40px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  margin: 12px auto 0;
+}
+
+.item-sheet__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-dark);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.item-sheet__image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.item-sheet__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-sheet__body {
+  padding: 20px 22px 24px;
+}
+
+.item-sheet__body h3 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.item-sheet__desc {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.item-sheet__price {
+  color: var(--color-primary);
+  font-weight: 800;
+  font-size: 1.15rem;
+  margin-bottom: 18px;
+}
+
+.item-sheet__section {
+  margin-bottom: 18px;
+}
+
+.item-sheet__label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  margin-bottom: 8px;
+}
+
+#sheetNotes {
+  width: 100%;
+  padding: 11px 13px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  font-family: inherit;
+  font-size: 0.9rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+#sheetNotes:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.item-sheet__footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  position: sticky;
+  bottom: 0;
+  background: var(--color-card);
+  padding-top: 4px;
+}
+
+.item-sheet__footer .btn {
+  flex: 1;
+}
+
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.qty-stepper__btn {
+  width: 38px;
+  height: 38px;
+  border: none;
+  background: var(--color-bg);
+  color: var(--color-dark);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.qty-stepper__btn:active { background: var(--color-border); }
+
+#sheetQty {
+  width: 34px;
+  text-align: center;
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  background: transparent;
+}
+
+body.item-sheet-open {
+  overflow: hidden;
+}
+
+/* --- Per-baris qty (pilih beberapa tingkat pedas/suhu sekaligus,
+   berguna kalau 1 meja pesan menu sama dengan tingkat beda-beda) --- */
+.option-qty-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option-qty-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 4px;
+}
+
+.option-qty-row__label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.qty-stepper--row {
+  border-width: 1px;
+}
+
+.qty-stepper--row .qty-stepper__btn {
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+}
+
+.option-qty-row__input {
+  width: 28px;
+  text-align: center;
+  border: none;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  background: transparent;
+}
+
+.item-sheet__hint {
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-top: 8px;
+  display: none;
+}
+
+.item-sheet__hint.show {
+  display: block;
+}
