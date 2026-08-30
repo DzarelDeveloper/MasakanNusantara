@@ -25,6 +25,7 @@ Gunakan kredensial berikut untuk mencoba alur pembayaran dan panel kasir pada li
 | Akses | Email / Username | Password / PIN |
 |---|---|---|
 | 💳 E-Wallet (Simulasi) | — | `987654` |
+| 👑 Demo Admin | `demoadmin@gmail.com` | `DemoAdmin123` |
 | 🧾 Akun Kasir | `demokasir@gmail.com` | `Demo123` |
 
 > Kredensial di atas hanya digunakan untuk keperluan demonstrasi. Jangan gunakan pada lingkungan produksi.
