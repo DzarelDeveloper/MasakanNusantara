@@ -18,6 +18,17 @@
 
 > **🔗 Demo live:** [masakannusantara.my.id](https://masakannusantara.my.id) — scan salah satu contoh QR meja di bagian **Cara Pakai** di bawah untuk langsung coba alurnya dari HP kamu.
 
+### 🔐 Akses Demo
+
+Gunakan kredensial berikut untuk mencoba alur pembayaran dan panel kasir pada lingkungan simulasi:
+
+| Akses | Email / Username | Password / PIN |
+|---|---|---|
+| 💳 E-Wallet (Simulasi) | — | `987654` |
+| 🧾 Akun Kasir | `demokasir@gmail.com` | `Demo123` |
+
+> Kredensial di atas hanya digunakan untuk keperluan demonstrasi. Jangan gunakan pada lingkungan produksi.
+
 ---
 
 ## Apa itu Masakan Nusantara?
