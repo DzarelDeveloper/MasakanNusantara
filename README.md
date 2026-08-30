@@ -28,6 +28,8 @@ Gunakan kredensial berikut untuk mencoba alur pembayaran dan panel kasir pada li
 | 👑 Demo Admin | `demoadmin@gmail.com` | `DemoAdmin123` |
 | 🧾 Akun Kasir | `demokasir@gmail.com` | `Demo123` |
 
+> **⏳ Batas akses demo:** Akun demo hanya tersedia sampai **10 September 2026**. Setelah tanggal tersebut, seluruh akun demo akan dinonaktifkan dan dihapus.
+>
 > Kredensial di atas hanya digunakan untuk keperluan demonstrasi. Jangan gunakan pada lingkungan produksi.
 
 ---
